@@ -4,15 +4,16 @@ on:
   push:
     branches:
       - main
+
   schedule:
-    - cron: '*/5 * * * *'  # La acción se ejecuta cada 5 minutos
+    - cron: '*/5 * * * *' # Que la acción se ejecute cada 5 minutos
 
 jobs:
   monitor:
     runs-on: ubuntu-latest
 
     permissions:
-      contents: write  
+      contents: write  # Necesario para poder hacer git push
 
     steps:
       - name: Checkout
@@ -21,52 +22,33 @@ jobs:
       - name: Obtener código de estado con curl
         run: |
           # Definir la URL a monitorizar
-          URL="https://mercadona.es"
+          URL="https://mercadona.es"  
           
           # Hacer la llamada HTTP con curl
           STATUS_CODE=$(curl -o /dev/null -s -w "%{http_code}" $URL)
-          echo "Código de estado de la URL: $STATUS_CODE"
           
-          # Obtener la hora actual en formato YYYY-MM-DD_HH-MM-SS
+          # Obtener la hora actual en formato YYYY-MM-DD HH:MM:SS
           CURRENT_TIME=$(date '+%Y-%m-%d_%H-%M-%S')
           
-          # Verificar si el archivo 'status_log.txt' existe, si no, crearlo
-          if [ ! -f status_log.txt ]; then
-            echo "Creando archivo de logs"
-            echo "Fecha y hora - Código de estado" > status_log.txt
-          fi
-
-          # Agregar el log al archivo sin sobrescribir
+          # Guardar el resultado en un archivo
           echo "$CURRENT_TIME - Status code: $STATUS_CODE" >> status_log.txt
+          
+          # Subir el archivo al repositorio
+          git config --global user.name "Alvaro"
+          git config --global user.email "17alma41@gmail.com"
+          git add .
+          git commit -m "Actualización de estado - $CURRENT_TIME"
 
-          # Verificar si hay cambios en el archivo antes de hacer commit
-          git diff --quiet status_log.txt
-          if [ $? -eq 1 ]; then
-            echo "Detectado cambio en el archivo de log. Procediendo con commit y push."
-            
-            # Configurar el nombre y el correo del usuario para el commit
-            git config --global user.name "Alvaro"
-            git config --global user.email "17alma41@gmail.com"
-            
-            # Añadir el archivo de log modificado y hacer commit
-            git add status_log.txt
-            git commit -m "Actualización de estado - $CURRENT_TIME"
-            
-            # Hacer push usando el token de GitHub
-            echo "Realizando git push..."
-            git push https://x-access-token:${{ secrets.GH_TOKEN }}@github.com/${{ github.repository }} HEAD:main
-          else
-            echo "No hay cambios en el archivo de log, no es necesario hacer commit."
-          fi
+          # Usar GITHUB_TOKEN para autenticarse y hacer push
+          git push https://x-access-token:${{ secrets.GH_TOKEN }}@github.com/${{ github.repository }} HEAD:main
 
-      - name: Enviar mensaje a Telegram con estado de la URL
+      - name: Enviar mensaje a Telegram
         run: |
           TOKEN="${{ secrets.BOT_TOKEN }}"
           CHAT_ID="${{ secrets.CHAT_ID }}"
           MESSAGE="El estado de la URL $URL a las $CURRENT_TIME es: $STATUS_CODE"
           
           # Enviar el mensaje a Telegram
-          echo "Enviando mensaje a Telegram..."
           curl -X POST "https://api.telegram.org/bot$TOKEN/sendMessage" \
               -d chat_id=$CHAT_ID \
               -d text="$MESSAGE"
