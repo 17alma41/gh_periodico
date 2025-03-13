@@ -36,5 +36,9 @@ jobs:
           git config --global user.email "17alma41@gmail.com"
           git add .
           git commit -m "Actualización de estado - $CURRENT_TIME"
-          git push
+
+          # Usar GH_TOKEN para autenticarse y hacer push
+          git push https://x-access-token:${{ secrets.GH_TOKEN }}@github.com/${{ github.repository }} HEAD:main
+
+
 
