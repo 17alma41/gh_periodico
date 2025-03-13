@@ -12,18 +12,29 @@ jobs:
     runs-on: ubuntu-latest
 
     permissions:
-      contents: write  
+      contents: write  # Necesario para poder hacer git push
 
     steps:
       - name: Checkout
         uses: actions/checkout@v2
 
+      - name: Comprobar conectividad de la API
+        run: |
+          curl -v https://api.coindesk.com/v1/bpi/currentprice.json
+
       - name: Llamada a la API y guardar resultado
         run: |
+          # Definir la URL de la API (usamos una API pública de ejemplo)
           API_URL="https://api.coindesk.com/v1/bpi/currentprice.json"
           
           # Obtener la respuesta de la API y guardarla en una variable
           API_RESPONSE=$(curl -s $API_URL)
+
+          # Verificar si la llamada a la API fue exitosa
+          if [ $? -ne 0 ]; then
+            echo "Error al realizar la llamada a la API"
+            exit 1
+          fi
 
           # Obtener la hora actual en formato YYYY-MM-DD_HH-MM-SS para el nombre del archivo
           CURRENT_TIME=$(date '+%Y-%m-%d_%H-%M-%S')
