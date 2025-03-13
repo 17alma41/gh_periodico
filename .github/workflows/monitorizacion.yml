@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
 
     permissions:
-      contents: write 
+      contents: write  
 
     steps:
       - name: Checkout
@@ -25,8 +25,9 @@ jobs:
           
           # Hacer la llamada HTTP con curl
           STATUS_CODE=$(curl -o /dev/null -s -w "%{http_code}" $URL)
+          echo "Código de estado de la URL: $STATUS_CODE"
           
-          # Obtener la hora actual en formato YYYY-MM-DD HH:MM:SS
+          # Obtener la hora actual en formato YYYY-MM-DD_HH-MM-SS
           CURRENT_TIME=$(date '+%Y-%m-%d_%H-%M-%S')
           
           # Verificar si el archivo 'status_log.txt' existe, si no, crearlo
@@ -41,11 +42,18 @@ jobs:
           # Verificar si hay cambios en el archivo antes de hacer commit
           git diff --quiet status_log.txt
           if [ $? -eq 1 ]; then
-            # Si hay cambios, hacer commit y push
+            echo "Detectado cambio en el archivo de log. Procediendo con commit y push."
+            
+            # Configurar el nombre y el correo del usuario para el commit
             git config --global user.name "Alvaro"
             git config --global user.email "17alma41@gmail.com"
-            git add status_log.txt  # Asegurarse de que solo se agregue el archivo de logs
+            
+            # Añadir el archivo de log modificado y hacer commit
+            git add status_log.txt
             git commit -m "Actualización de estado - $CURRENT_TIME"
+            
+            # Hacer push usando el token de GitHub
+            echo "Realizando git push..."
             git push https://x-access-token:${{ secrets.GH_TOKEN }}@github.com/${{ github.repository }} HEAD:main
           else
             echo "No hay cambios en el archivo de log, no es necesario hacer commit."
@@ -58,6 +66,7 @@ jobs:
           MESSAGE="El estado de la URL $URL a las $CURRENT_TIME es: $STATUS_CODE"
           
           # Enviar el mensaje a Telegram
+          echo "Enviando mensaje a Telegram..."
           curl -X POST "https://api.telegram.org/bot$TOKEN/sendMessage" \
               -d chat_id=$CHAT_ID \
               -d text="$MESSAGE"
