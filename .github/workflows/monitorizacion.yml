@@ -42,3 +42,15 @@ jobs:
 
           # Usar GITHUB_TOKEN para autenticarse y hacer push
           git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }} HEAD:main
+
+        
+        - name: Enviar mensaje a Telegram
+          run: |
+            TOKEN="${{ secrets.BOT_TOKEN }}"
+            CHAT_ID="${{ secrets.CHAT_ID }}"
+            MESSAGE="El estado de la URL $URL a las $CURRENT_TIME es: $STATUS_CODE"
+            
+            # Enviar el mensaje a Telegram
+            curl -X POST "https://api.telegram.org/bot$TOKEN/sendMessage" \
+                -d chat_id=$CHAT_ID \
+                -d text="$MESSAGE"
