@@ -5,8 +5,8 @@ on:
     branches:
       - main
 
-  #schedule:
-    #- cron: '* * * * *' # Que la acción se ejecute cada minuto
+  chedule:
+    - cron: '*/5 * * * *' # Que la acción se ejecute cada 5 minutos
  
 
 jobs:
@@ -14,7 +14,7 @@ jobs:
     runs-on: ubuntu-latest
 
     permissions:
-      contents: write  # Necesario para poder hacer git push
+      contents: write  
 
     steps:
       - name: Checkout
