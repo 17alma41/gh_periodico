@@ -12,20 +12,18 @@ jobs:
     runs-on: ubuntu-latest
 
     permissions:
-      contents: write  # Necesario para poder hacer git push
+      contents: write  
 
     steps:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - name: Comprobar conectividad de la API
-        run: |
-          curl -v https://api.coindesk.com/v1/bpi/currentprice.json
-
       - name: Llamada a la API y guardar resultado
         run: |
-          # Definir la URL de la API (usamos una API pública de ejemplo)
-          API_URL="https://api.coindesk.com/v1/bpi/currentprice.json"
+          # Definir la URL de la API de OpenWeatherMap (usamos una ciudad de ejemplo)
+          CITY="London"
+          API_KEY="${{ secrets.OPENWEATHER_API_KEY }}"
+          API_URL="https://api.openweathermap.org/data/2.5/weather?q=$CITY&appid=$API_KEY&units=metric"
           
           # Obtener la respuesta de la API y guardarla en una variable
           API_RESPONSE=$(curl -s $API_URL)
@@ -40,12 +38,12 @@ jobs:
           CURRENT_TIME=$(date '+%Y-%m-%d_%H-%M-%S')
 
           # Guardar el resultado de la API en un archivo con el nombre basado en la hora
-          echo "$API_RESPONSE" > "api_response_$CURRENT_TIME.json"
+          echo "$API_RESPONSE" > "weather_response_$CURRENT_TIME.json"
 
           # Configuración de Git
           git config --global user.name "Alvaro"
           git config --global user.email "17alma41@gmail.com"
-          git add "api_response_$CURRENT_TIME.json"  # Añadir el nuevo archivo de respuesta
+          git add "weather_response_$CURRENT_TIME.json"  # Añadir el nuevo archivo de respuesta
           git commit -m "Nuevo archivo de respuesta API - $CURRENT_TIME"
 
           # Hacer push del nuevo archivo al repositorio
@@ -55,7 +53,7 @@ jobs:
         run: |
           TOKEN="${{ secrets.BOT_TOKEN }}"
           CHAT_ID="${{ secrets.CHAT_ID }}"
-          MESSAGE="La respuesta de la API de Bitcoin es: $API_RESPONSE"
+          MESSAGE="La respuesta de la API del clima en $CITY es: $API_RESPONSE"
           
           # Enviar el mensaje a Telegram
           curl -X POST "https://api.telegram.org/bot$TOKEN/sendMessage" \
