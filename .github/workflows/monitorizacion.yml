@@ -36,6 +36,10 @@ jobs:
           # Subir el archivo al repositorio
           git config --global user.name "Alvaro"
           git config --global user.email "17alma41@gmail.com"
+          
+          # Hacer pull para traer los últimos cambios del repositorio remoto
+          git pull origin main
+
           git add .
           git commit -m "Actualización de estado - $CURRENT_TIME"
 
