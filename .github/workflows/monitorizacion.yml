@@ -31,7 +31,10 @@ jobs:
           CURRENT_TIME=$(date '+%Y-%m-%d_%H-%M-%S')
           
           # Guardar el resultado en un archivo
-          echo "$CURRENT_TIME - Status code: $STATUS_CODE" >> status_log.txt
+          if [ ! -f status_log.txt ]; then
+            echo "Creando archivo de logs"
+            echo "Fecha y hora - Código de estado" > status_log.txt
+          fi
           
           # Subir el archivo al repositorio
           git config --global user.name "Alvaro"
