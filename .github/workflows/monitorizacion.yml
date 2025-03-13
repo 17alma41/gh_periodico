@@ -1,8 +1,12 @@
 name: Monitorización Web
 
 on:
-  schedule:
-    - cron: '* * * * *' # Que la acción se ejecute cada minuto
+  push:
+    branches:
+      - main
+
+  #schedule:
+    #- cron: '* * * * *' # Que la acción se ejecute cada minuto
  
 
 jobs:
@@ -10,6 +14,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
       - name: Obtener código de estado con curl
         run: |
           # Definir la URL a monitorizar
