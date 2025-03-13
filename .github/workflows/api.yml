@@ -38,7 +38,7 @@ jobs:
           git commit -m "Nuevo archivo de respuesta API - $CURRENT_TIME"
 
           # Hacer push del nuevo archivo al repositorio
-          git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }} HEAD:main
+          git push https://x-access-token:${{ secrets.GH_TOKEN }}@github.com/${{ github.repository }} HEAD:main
 
       - name: Enviar mensaje a Telegram con respuesta de la API
         run: |

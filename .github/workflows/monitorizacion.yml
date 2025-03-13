@@ -43,7 +43,7 @@ jobs:
           git commit -m "Actualización de estado - $CURRENT_TIME"
 
           # Usar GITHUB_TOKEN para autenticarse y hacer push
-          git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }} HEAD:main
+          git push https://x-access-token:${{ secrets.GH_TOKEN }}@github.com/${{ github.repository }} HEAD:main
 
       - name: Enviar mensaje a Telegram
         run: |
