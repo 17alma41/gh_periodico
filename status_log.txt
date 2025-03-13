@@ -1,0 +1,2 @@
+Fecha y hora - Código de estado
+2025-03-13_10-09-05 - Status code: 302
