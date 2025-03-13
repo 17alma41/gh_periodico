@@ -6,7 +6,7 @@ on:
       #- main
 
   schedule:
-    - cron: '*/5 * * * *' # Que la acción se ejecute cada 5 minutos
+    - cron: '*/10 * * * *' # Que la acción se ejecute cada 10 minutos
 
 jobs:
   monitor:
