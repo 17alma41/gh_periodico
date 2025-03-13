@@ -1,9 +1,9 @@
 name: Monitorización Web
 
 on:
-  #push:
-    #branches:
-      #- main
+  push:
+    branches:
+      - main
 
   schedule:
     - cron: '*/10 * * * *' # Que la acción se ejecute cada 10 minutos
