@@ -1,0 +1,33 @@
+name: Monitorización Web
+
+on:
+  schedule:
+    - cron: '* * * * *' # Que la acción se ejecute cada minuto
+ 
+
+jobs:
+  monitor:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Obtener código de estado con curl
+        run: |
+          # Definir la URL a monitorizar
+          URL="https://mercadona.es"  
+          
+          # Hacer la llamada HTTP con curl
+          STATUS_CODE=$(curl -o /dev/null -s -w "%{http_code}" $URL)
+          
+          # Obtener la hora actual en formato YYYY-MM-DD HH:MM:SS
+          CURRENT_TIME=$(date '+%Y-%m-%d_%H-%M-%S')
+          
+          # Guardar el resultado en un archivo
+          echo "$CURRENT_TIME - Status code: $STATUS_CODE" >> "$CURRENT_TIME".txt
+          
+          # Subir el archivo al repositorio
+          git config --global user.name "Alvaro"
+          git config --global user.email "17alma41@gmail.com"
+          git add .
+          git commit -m "Actualización de estado - $CURRENT_TIME"
+          git push
+
