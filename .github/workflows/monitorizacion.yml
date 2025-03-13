@@ -1,12 +1,12 @@
 name: Monitorización Web
 
 on:
-  push:
-    branches:
-      - main
+  #push:
+    #branches:
+      #- main
 
   schedule:
-    - cron: '*/5 * * * *'  # La acción se ejecuta cada 5 minutos
+    - cron: '*/5 * * * *' # Que la acción se ejecute cada 5 minutos
 
 jobs:
   monitor:
@@ -30,16 +30,13 @@ jobs:
           # Obtener la hora actual en formato YYYY-MM-DD HH:MM:SS
           CURRENT_TIME=$(date '+%Y-%m-%d_%H-%M-%S')
           
-          # Verificar si el archivo 'status_log.txt' existe, si no, crearlo
+          # Guardar el resultado en un archivo
           if [ ! -f status_log.txt ]; then
             echo "Creando archivo de logs"
             echo "Fecha y hora - Código de estado" > status_log.txt
           fi
 
-          # Agregar el log al archivo sin sobrescribir
-          echo "$CURRENT_TIME - Status code: $STATUS_CODE" >> status_log.txt
-          
-          # Configuración de Git
+          # Subir el archivo al repositorio
           git config --global user.name "Alvaro"
           git config --global user.email "17alma41@gmail.com"
           git add .
@@ -48,32 +45,11 @@ jobs:
           # Usar GITHUB_TOKEN para autenticarse y hacer push
           git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }} HEAD:main
 
-      - name: Llamada a la API de Bitcoin
-        run: |
-          # Definir la URL de la API (usamos una API pública de ejemplo)
-          API_URL="https://api.coindesk.com/v1/bpi/currentprice.json"
-          
-          # Obtener la respuesta de la API y guardarla en una variable
-          API_RESPONSE=$(curl -s $API_URL)
-
-          # Obtener la hora actual en formato YYYY-MM-DD_HH-MM-SS para el nombre del archivo
-          CURRENT_TIME=$(date '+%Y-%m-%d_%H-%M-%S')
-
-          # Guardar el resultado de la API en un archivo con el nombre basado en la hora
-          echo "$API_RESPONSE" > "api_response_$CURRENT_TIME.json"
-
-          # Configuración de Git
-          git add .
-          git commit -m "Nuevo archivo de respuesta API - $CURRENT_TIME"
-
-          # Hacer push del nuevo archivo al repositorio
-          git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }} HEAD:main
-
-      - name: Enviar mensaje a Telegram con estado y API
+      - name: Enviar mensaje a Telegram
         run: |
           TOKEN="${{ secrets.BOT_TOKEN }}"
           CHAT_ID="${{ secrets.CHAT_ID }}"
-          MESSAGE="El estado de la URL $URL a las $CURRENT_TIME es: $STATUS_CODE. Además, la respuesta de la API de Bitcoin es: $API_RESPONSE"
+          MESSAGE="El estado de la URL $URL a las $CURRENT_TIME es: $STATUS_CODE"
           
           # Enviar el mensaje a Telegram
           curl -X POST "https://api.telegram.org/bot$TOKEN/sendMessage" \
