@@ -31,8 +31,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
         run: |
-          git config --global user.name "github-actions"
-          git config --global user.email "github-actions@github.com"
+          git config --global user.name "Alvaro"
+          git config --global user.email "17alma41@gmail.com"
           git add logs_backup/ || echo "No hay cambios en logs_backup"
           git diff --cached --quiet || (git commit -m "Backup de logs del VPS" && git push origin main)
 
