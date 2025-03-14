@@ -29,3 +29,7 @@ EXTRA: Guarda diferentes archivos, donde el nombre del archivo sea la fecha y ho
 ## Aviso en Telegram
 
 Envía un mensaje a un canal de telegram cada vez que se ejecute una acción de github incluyendo información de la acción y el resultado de la misma.
+
+Ejemplo:
+
+![](images-example/image.png)
