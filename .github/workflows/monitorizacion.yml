@@ -29,12 +29,17 @@ jobs:
 
       - name: Commit and push results
         env:
-          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
         run: |
-          git config --global user.name "Alvaro"
-          git config --global user.email "17alma41@gmail.com"
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
+          # Descargar la última versión del repositorio para evitar conflictos
+          git pull --rebase https://x-access-token:${{ secrets.GH_TOKEN }}@github.com/${{ github.repository }}.git main || echo "No hay cambios remotos"
+
           git add web_status.log || echo "No hay cambios en web_status.log"
-          git diff --cached --quiet || (git commit -m "Actualización de estado web" && git push https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }}.git main)
+          git diff --cached --quiet || (git commit -m "Actualización de estado web" && git push https://x-access-token:${{ secrets.GH_TOKEN }}@github.com/${{ github.repository }}.git main)
+
 
       - name: Send Telegram message
         run: |
