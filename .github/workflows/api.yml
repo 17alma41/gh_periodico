@@ -2,7 +2,7 @@ name: API Call
 
 on:
   schedule:
-    - cron: '*/5 * * * *'  # Ejecutar cada 5 minutos
+    - cron: '0 0 * * *'  # Ejecutar a medianoche UTC todos los días
   workflow_dispatch:  
 
 jobs:
@@ -40,6 +40,10 @@ jobs:
       # Enviar mensaje a Telegram
       - name: Send Telegram message
         run: |
+          CITY="Madrid"  # Asegúrate de definir la ciudad aquí o pasarlo desde un paso anterior
+          USER_TIMESTAMP=$(date +'%Y-%m-%d_%H-%M-%S')
+          MESSAGE="API Request completed. New weather data for ${CITY} saved at ${USER_TIMESTAMP}"
+          
           curl -s -X POST "https://api.telegram.org/bot${{ secrets.BOT_TOKEN }}/sendMessage" \
                -d chat_id="${{ secrets.CHAT_ID }}" \
-               -d text="API Request completed. New weather data for ${CITY} saved at $USER_TIMESTAMP"
+               -d text="$MESSAGE"
