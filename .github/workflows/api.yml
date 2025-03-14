@@ -28,15 +28,14 @@ jobs:
             --header "x-rapidapi-key: ${{ secrets.OPENWEATHER_KEY }}" \
             -o "api_responses/weather_${CITY}_${USER_TIMESTAMP}.json"
 
-      # Commit y Push de la respuesta de la API
       - name: Commit and push API response
         env:
-          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
         run: |
-          git config --global user.name "Alvaro"
-          git config --global user.email "17alma41@gmail.com"
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git add api_responses/ || echo "No hay cambios en api_responses"
-          git diff --cached --quiet || (git commit -m "Nueva llamada a OpenWeather - $USER_TIMESTAMP" && git push origin main)
+          git diff --cached --quiet || (git commit -m "Nueva llamada a OpenWeather - $USER_TIMESTAMP" && git push https://x-access-token:${{ secrets.GH_TOKEN }}@github.com/${{ github.repository }}.git main)
 
       # Enviar mensaje a Telegram
       - name: Send Telegram message
