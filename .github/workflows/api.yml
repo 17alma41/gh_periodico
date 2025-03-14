@@ -41,7 +41,7 @@ jobs:
       - name: Send Telegram message
         run: |
           CITY="Madrid"  # Asegúrate de definir la ciudad aquí o pasarlo desde un paso anterior
-          USER_TIMESTAMP=$(date +'%Y-%m-%d_%H-%M-%S')
+          USER_TIMESTAMP=$(date +'%Y-%m-%d_%H:%M:%S')
           MESSAGE="API Request completed. New weather data for ${CITY} saved at ${USER_TIMESTAMP}"
           
           curl -s -X POST "https://api.telegram.org/bot${{ secrets.BOT_TOKEN }}/sendMessage" \

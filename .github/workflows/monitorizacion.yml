@@ -38,6 +38,10 @@ jobs:
 
       - name: Send Telegram message
         run: |
+          URL="https://mercadona.es"
+          STATUS=$(curl -o /dev/null -s -w "%{http_code}" "$URL")
+          MESSAGE="El estado del sitio web ${URL} fue actualizado. Código de estado: ${STATUS}"
+
           curl -s -X POST "https://api.telegram.org/bot${{ secrets.BOT_TOKEN }}/sendMessage" \
-               -d chat_id="${{ secrets.CHAT_ID }}" \
-               -d text="El estado del sitio web fue actualizado. Código de estado: $STATUS"
+              -d chat_id="${{ secrets.CHAT_ID }}" \
+              -d text="$MESSAGE"
