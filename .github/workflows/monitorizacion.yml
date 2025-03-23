@@ -1,8 +1,8 @@
 name: Monitoreo
 
 on:
-  schedule:
-    - cron: '0 0 * * *'  # Ejecutar a medianoche UTC todos los días
+  # schedule:
+    # - cron: '0 0 * * *'  # Ejecutar a medianoche UTC todos los días
   workflow_dispatch:
 
 permissions:
